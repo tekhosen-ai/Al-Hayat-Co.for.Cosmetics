@@ -48,7 +48,7 @@ body {
 
 /* الهيكل الرئيسي للوحة التحكم */
 .dashboard-layout {
-    display: none; /* يتم تفعيله بالجافاسكريبت */
+    display: none;
     grid-template-columns: 280px 1fr;
     min-height: 100vh;
 }
@@ -216,7 +216,7 @@ tr:hover td { background-color: #f8fafc; }
 .badge-success { background-color: var(--success); }
 .badge-warning { background-color: var(--warning); }
 
-/* التنقل الداخلي الأقسام مخفية افتراضياً وتظهر فقط عند تفعيل الكلاس */
+/* التنقل الداخلي */
 .view-section { display: none; }
 .view-section.active-section { display: block !important; animation: fadeIn 0.3s ease; }
 
