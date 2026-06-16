@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النظام الاحترافي لإدارة الشركات والفروع</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loginPage" class="login-wrapper">
+        <div class="login-card">
+            <h2>خواص لإدارة الفروع</h2>
+            <p>سجل دخولك لإدارة أفرع الشركة والعمال والمحاسبة</p>
+            <div class="form-group">
+                <label>اسم المستخدم</label>
+                <input type="text" id="username" placeholder="أدخل اسم المستخدم">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" placeholder="أدخل كلمة المرور">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">تسجيل الدخول</button>
+            <div style="margin-top: 20px; font-size: 12px; color: #94a3b8; background: #f8fafc; padding: 10px; border-radius: 6px;">
+                المالك الافتراضي: admin | الباسورد: admin123
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardPage" class="dashboard-layout">
+        <sidebar>
+            <div>
+                <div class="sidebar-brand">شركة خواص الذكية</div>
+                
+                <div class="menu-label">العام والملخصات</div>
+                <button class="nav-btn active" onclick="switchSection('overview')">📊 قائمة كل شيء الإجمالية</button>
+                <button class="nav-btn owner-only-btn" onclick="switchSection('branches')">🏢 تأسيس الفروع الجديدة</button>
+                <button class="nav-btn owner-only-btn" onclick="switchSection('accounts')">🔑 رتب وصلاحيات النظام</button>
+                <button class="nav-btn owner-only-btn" onclick="switchSection('logs')">📋 سجل العمليات (Logs)</button>
+                
+                <div class="menu-label">📂 قوائم الفروع المستقلة</div>
+                <div id="sidebarBranchesList" class="dynamic-branches-list"></div>
+            </div>
+            
+            <div style="margin-top: auto;">
+                <button class="btn btn-danger" style="width: 100%;" onclick="logout()">🚪 تسجيل الخروج</button>
+            </div>
+        </sidebar>
+
+        <main>
+            <div class="top-bar">
+                <div>
+                    <h2 id="welcomeMsg" style="font-weight: 700;">مرحباً بك مجدداً</h2>
+                    <p style="font-size:14px; color:#64748b;">نظام الإدارة المتكامل والأفرع</p>
+                </div>
+                <div style="text-align: left;">
+                    <span style="font-size:13px; color:#64748b;">صلاحيتك الحالية:</span>
+                    <div id="userRoleBadge" style="font-weight: 700; color: var(--primary);">مالك الشركة</div>
+                </div>
+            </div>
+
+            <div id="overview" class="view-section active-section">
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <h4>عدد الفروع النشطة</h4>
+                        <h2 id="statBranchesCount">0</h2>
+                    </div>
+                    <div class="stats-card green">
+                        <h4>إجمالي عمال الشركة (كل الفروع)</h4>
+                        <h2 id="statEmployeesCount">0</h2>
+                    </div>
+                    <div class="stats-card orange">
+                        <h4>المصاريف الإجمالية للرواتب</h4>
+                        <h2 id="statTotalSalaries">0 $</h2>
+                    </div>
+                </div>
+
+                <div class="main-card">
+                    <h3>🌐 القائمة الشاملة لجميع العمال في الشركة (كل الفروع)</h3>
+                    <p style="color:#64748b; font-size:14px; margin-bottom:15px;">هنا تظهر بيانات كافة العمال الموظفين عبر فروعك بالكامل للمراقبة العامة وتعديل المحاسبين.</p>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الاسم الكامل</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>الفرع التابع له</th>
+                                    <th>الراتب الأساسي</th>
+                                    <th>الحالة التوظيفية</th>
+                                    <th>إجراءات عامة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="globalEmployeesTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="branches" class="view-section">
+                <div class="grid-2">
+                    <div class="main-card">
+                        <h3>🏗️ تأسيس وإنشاء فرع جديد</h3>
+                        <div class="form-group">
+                            <label>اسم الفرع الفريد</label>
+                            <input type="text" id="branchName" placeholder="مثال: فرع دبي، فرع الرياض">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم مدير هذا الفرع المعين</label>
+                            <input type="text" id="branchManager" placeholder="الاسم الكامل لمدير الفرع">
+                        </div>
+                        <div class="form-group">
+                            <label>راتب مدير الفرع</label>
+                            <input type="number" id="branchManagerSalary" placeholder="كم يكسب مدير الفرع؟">
+                        </div>
+                        <button class="btn btn-primary" onclick="createNewBranch()">إنشاء وتأكيد الفرع</button>
+                    </div>
+
+                    <div class="main-card">
+                        <h3>📋 الأفرع الحالية المسجلة والتحكم بها</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>اسم الفرع</th>
+                                        <th>مدير الفرع</th>
+                                        <th>راتب المدير</th>
+                                        <th>إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allBranchesTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="accounts" class="view-section">
+                <div class="grid-2">
+                    <div class="main-card">
+                        <h3>🔑 صناعة وتعديل رتب مستخدمي النظام</h3>
+                        <p style="color:#64748b; font-size:14px; margin-bottom: 20px;">يمكن للمالك فقط توليد حسابات للمحاسبين لتمكينهم من تعديل البيانات دون حذف الفروع.</p>
+                        <div class="form-group">
+                            <label>اسم المستخدم الجديد</label>
+                            <input type="text" id="newUsername" placeholder="مثال: mohammad_acc">
+                        </div>
+                        <div class="form-group">
+                            <label>كلمة مرور الحساب</label>
+                            <input type="password" id="newPassword" placeholder="******">
+                        </div>
+                        <div class="form-group">
+                            <label>صلاحية الرتبة</label>
+                            <select id="newRole">
+                                <option value="accountant">محاسب (تعديل الأسماء وهواتف ورواتب العمال وإعطاء إجازات وفصل)</option>
+                                <option value="owner">مالك شركة (تحكم مطلق بكل شيء وتأسيس فروع ورتب)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="createNewUserAccount()">حفظ وتفعيل الرتبة</button>
+                    </div>
+
+                    <div class="main-card">
+                        <h3>👥 إدارة وحذف الحسابات الحالية</h3>
+                        <p style="color:#64748b; font-size:14px; margin-bottom: 20px;">استعرض الحسابات النشطة في النظام حالياً وقم بحذف أي حساب لم يعد مطلوباً.</p>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>اسم المستخدم</th>
+                                        <th>الصلاحية / الرتبة</th>
+                                        <th>إجراءات الحذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="systemUsersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logs" class="view-section">
+                <div class="main-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>📋 سجل مراقبة العمليات والنظام (System Logs)</h3>
+                        <button class="btn btn-danger" style="padding: 6px 16px; font-size: 13px;" onclick="clearLogs()">🧹 تصفية السجل بالكامل</button>
+                    </div>
+                    <p style="color:#64748b; font-size:14px; margin-bottom:15px;">يعرض هذا القسم كافة التحركات والإجراءات المالية والحسابية الحساسة التي تمت على النظام للمراقبة والأمان.</p>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>التاريخ والوقت</th>
+                                    <th>المستخدِم المسؤول</th>
+                                    <th>نوع الإجراء</th>
+                                    <th>تفاصيل العملية الحركية</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="singleBranchView" class="view-section">
+                <div class="top-bar" style="background: var(--sidebar-bg); color: white;">
+                    <div>
+                        <h2 id="selectedBranchTitle" style="color: white;">إدارة فرع: </h2>
+                        <p id="selectedBranchManagerInfo" style="color: #94a3b8; font-size:14px;">المدير المسؤول: </p>
+                    </div>
+                </div>
+
+                <div class="main-card">
+                    <h3 id="addEmpToBranchHeading">➕ توظيف عامل جديد في هذا الفرع مباشرة</h3>
+                    <div class="grid-2" style="grid-template-columns: 2fr 1fr 1fr;">
+                        <div class="form-group">
+                            <label>الاسم الكامل للعامل</label>
+                            <input type="text" id="sbEmpName" placeholder="الاسم الكامل">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="text" id="sbEmpPhone" placeholder="05xxxxxxxx">
+                        </div>
+                        <div class="form-group">
+                            <label>كم يكسب راتب شهري؟</label>
+                            <input type="number" id="sbEmpSalary" placeholder="الراتب">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addEmployeeToCurrentBranch()">تعيين وتوظيف في هذا الفرع</button>
+                </div>
+
+                <div class="main-card">
+                    <h3>👥 طاقم عمال هذا الفرع والتحكم ببياناتهم ورتبهم</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الاسم الكامل للعامِل</th>
+                                    <th>رقم الهاتف الخاص به</th>
+                                    <th>الراتب الحالي</th>
+                                    <th>الحالة الحالية</th>
+                                    <th>لوحة الإجراءات التعديلية (محاسب / مالك)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="branchSpecificEmployeesTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
